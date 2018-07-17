@@ -29,7 +29,6 @@ public class BookAdapter extends ArrayAdapter<Book> {
         String bookTitle = currentBook.getmTitle();
         String bookAuthor = currentBook.getmAuthor();
         String imageUrl = currentBook.getmImageUrl();
-        String previewUrl = currentBook.getmPreviewUrl();
 
         TextView titleTextView = listItemView.findViewById(R.id.title);
         TextView authorTextView = listItemView.findViewById(R.id.author);

@@ -66,6 +66,7 @@ public class QueryUtils {
     }
 */
     public static URL buildUrl(String userInput) {
+        Log.e(LOG_TAG, "IN buildUrl method");
         Uri builtUri = Uri.parse(GOOGLE_BOOKS_BASE_URL).buildUpon()
                 .appendQueryParameter(PARAM_QUERY, userInput)
                 .appendQueryParameter(PARAM_MAX_RESULT, Integer.toString(15)).build();

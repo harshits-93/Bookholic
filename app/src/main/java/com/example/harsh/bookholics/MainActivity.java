@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -110,22 +111,31 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
-        booksUrl = QueryUtils.buildUrl(mQueryEditText.getText().toString());
-        return new BooksLoader(this, booksUrl);
+        if(TextUtils.isEmpty(mQueryEditText.getText().toString())){
+            return null;
+        }
+        else{
+            //Build complete url based on user input
+            booksUrl = QueryUtils.buildUrl(mQueryEditText.getText().toString());
+            //create new loader with url passed to it.
+            return new BooksLoader(this, booksUrl);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> books) {
-        mQueryEditText.setVisibility(View.VISIBLE);
         mLoadingIndicator.setVisibility(View.GONE);
-        // Set empty state text to display "No books found."
-        mEmptyView.setText(R.string.no_books);
+
+        //To clear all the previous content in adapter so as to load new data
         mAdapter.clear();
 
         if (mAdapter != null && !mAdapter.isEmpty()) {
             mAdapter.addAll(books);
         }
-        mEmptyView.setText("No books found");
+
+        // Set empty state text to display "No books found."
+        mEmptyView.setText(R.string.no_books);
+
     }
 
     @Override
@@ -140,8 +150,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             isConnected = true;
         else
             isConnected = false;
-
-
     }
 
 }
