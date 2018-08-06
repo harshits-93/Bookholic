@@ -26,15 +26,26 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     public static final String LOG_TAG = MainActivity.class.getName();
     private static final int BOOK_LOADER_ID = 1;
+
+    //Global variable for complete url
     URL booksUrl;
+
+    //TextView to be shown whenever there is no item on the screen
     TextView mEmptyView;
+
+    //A Progress Bar which is sown while loading takes place.
     ProgressBar mLoadingIndicator;
-    //search button instance
+
+    //Search button instance
     Button mSearchButton;
+
     //Edit text in which user inputs his query
     EditText mQueryEditText;
+
     //Variable to check Internet connection
     boolean isConnected;
+
+    //Instance of BookAdapter class
     private BookAdapter mAdapter;
 
     @Override
@@ -52,9 +63,13 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         mQueryEditText = findViewById(R.id.queryEditText);
         mSearchButton = findViewById(R.id.searchButton);
 
+        /*Setting an Empty view in the ListView so that it
+        is shown when there is no item in the list
+        */
         ListView listView = findViewById(R.id.listView);
         listView.setEmptyView(mEmptyView);
 
+        //Attaching listView with BookAdapter
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
         listView.setAdapter(mAdapter);
 
@@ -80,9 +95,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             public void onClick(View view) {
                 checkInternetConnection(cm);
                 if (isConnected) {
-                    // Update URL and restart loader to displaying new result of searching
-
-                    mQueryEditText.setVisibility(View.GONE);
+                    getLoaderManager().initLoader(BOOK_LOADER_ID, null, MainActivity.this);
                     mLoadingIndicator.setVisibility(View.VISIBLE);
 
                     String userQuery = mQueryEditText.getText().toString().trim();
@@ -100,21 +113,20 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         });
 
 
-        if (isConnected) {
+        /*if (isConnected) {
             getLoaderManager().initLoader(BOOK_LOADER_ID, null, this);
         } else {
             mLoadingIndicator.setVisibility(View.GONE);
             mEmptyView.setText("No Internet Connectivity");
         }
-
+*/
     }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
-        if(TextUtils.isEmpty(mQueryEditText.getText().toString())){
+        if (TextUtils.isEmpty(mQueryEditText.getText().toString())) {
             return null;
-        }
-        else{
+        } else {
             //Build complete url based on user input
             booksUrl = QueryUtils.buildUrl(mQueryEditText.getText().toString());
             //create new loader with url passed to it.
