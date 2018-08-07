@@ -7,15 +7,14 @@ import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.net.URL;
@@ -36,11 +35,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     //A Progress Bar which is sown while loading takes place.
     ProgressBar mLoadingIndicator;
 
-    //Search button instance
-    Button mSearchButton;
-
-    //Edit text in which user inputs his query
-    EditText mQueryEditText;
+    //Search View instance
+    SearchView mSearchView;
 
     //Variable to check Internet connection
     boolean isConnected;
@@ -57,11 +53,17 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         final ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         checkInternetConnection(cm);
 
+//        if (isConnected) {
+//            getLoaderManager().initLoader(BOOK_LOADER_ID, null, this);
+//        } else {
+//            mLoadingIndicator.setVisibility(View.GONE);
+//            mEmptyView.setText("No Internet Connectivity");
+//        }
+
         //Getting references of required xml elements
         mLoadingIndicator = findViewById(R.id.loading_indicator);
         mEmptyView = findViewById(R.id.emptyView);
-        mQueryEditText = findViewById(R.id.queryEditText);
-        mSearchButton = findViewById(R.id.searchButton);
+        mSearchView = findViewById(R.id.querySearchView);
 
         /*Setting an Empty view in the ListView so that it
         is shown when there is no item in the list
@@ -89,18 +91,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             }
         });
 
-        //Defining what happens when user click the search button
-        mSearchButton.setOnClickListener(new View.OnClickListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onQueryTextSubmit(String query) {
                 checkInternetConnection(cm);
                 if (isConnected) {
+                    //Initializing the loader
                     getLoaderManager().initLoader(BOOK_LOADER_ID, null, MainActivity.this);
                     mLoadingIndicator.setVisibility(View.VISIBLE);
-
-                    String userQuery = mQueryEditText.getText().toString().trim();
-                    booksUrl = QueryUtils.buildUrl(userQuery);
-                    getLoaderManager().restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
                 } else {
                     // Clear the adapter of previous book data
                     mAdapter.clear();
@@ -109,26 +107,28 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
                     mEmptyView.setText(R.string.no_internet);
                 }
 
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mEmptyView.setVisibility(View.GONE);
+                mLoadingIndicator.setVisibility(View.VISIBLE);
+                //getLoaderManager().restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
+                return true;
             }
         });
 
-
-        /*if (isConnected) {
-            getLoaderManager().initLoader(BOOK_LOADER_ID, null, this);
-        } else {
-            mLoadingIndicator.setVisibility(View.GONE);
-            mEmptyView.setText("No Internet Connectivity");
-        }
-*/
     }
 
     @Override
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
-        if (TextUtils.isEmpty(mQueryEditText.getText().toString())) {
+        if (TextUtils.isEmpty(mSearchView.getQuery().toString().trim())) {
             return null;
         } else {
             //Build complete url based on user input
-            booksUrl = QueryUtils.buildUrl(mQueryEditText.getText().toString());
+            booksUrl = QueryUtils.buildUrl(mSearchView.getQuery().toString().trim());
             //create new loader with url passed to it.
             return new BooksLoader(this, booksUrl);
         }

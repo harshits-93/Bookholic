@@ -6,38 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/search_bar"
+    <SearchView
+        android:id="@+id/querySearchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/queryEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="3"
-            android:hint="@string/edit_text_hint"
-            android:inputType="text"
-            android:maxLength="50" />
-
-        <Button
-            android:id="@+id/searchButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:text="search" />
-
-    </LinearLayout>
+        android:inputType="text"
+        android:queryHint="@string/search_view_text_hint">
+    </SearchView>
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_below="@id/search_bar" />
+        android:layout_below="@id/querySearchView"
+         />
 
     <TextView
         android:id="@+id/emptyView"
@@ -49,6 +31,7 @@
         android:id="@+id/loading_indicator"
         style="?android:progressBarStyle"
         android:layout_width="wrap_content"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 

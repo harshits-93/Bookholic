@@ -3,5 +3,5 @@
     <string name="no_books">No books found </string>
     <string name="no_image">No image</string>
     <string name="no_internet">No Internet Connectivity</string>
-    <string name="edit_text_hint">Search here for books</string>
+    <string name="search_view_text_hint">Search here for books</string>
 </resources>

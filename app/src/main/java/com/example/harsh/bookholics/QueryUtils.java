@@ -40,6 +40,7 @@ public class QueryUtils {
         // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
+            Log.e(LOG_TAG,"In fetchBookData");
             jsonResponse = makeHttpRequest(buildUrl);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error closing input stream", e);
@@ -80,6 +81,7 @@ public class QueryUtils {
         return url;
     }
 
+
     /**
      * Make an HTTP request to the given URL and return a String as the response.
      */
@@ -109,7 +111,7 @@ public class QueryUtils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the Book JSON results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -137,7 +139,7 @@ public class QueryUtils {
             }
 
         }
-        Log.e(LOG_TAG, "output" + output);
+
         return output.toString();
     }
 
@@ -156,16 +158,16 @@ public class QueryUtils {
         ArrayList<Book> books = new ArrayList<>();
 
         try {
-            // build up a list of Earthquake objects with the corresponding data.
+            // build up a list of Book objects with the corresponding data.
 
             JSONObject jsonRootObject = new JSONObject(bookJSON);
 
             //Get the instance of JSONArray that contains JSONObjects
             JSONArray jsonArray = jsonRootObject.optJSONArray("items");
 
-            //loop through objects in JSONArray
+            //Loop through objects in JSONArray
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                JSONObject jsonObject = jsonArray.optJSONObject(i);
 
                 JSONObject jsonVolumeInfoObject = jsonObject.getJSONObject("volumeInfo");
                 String title = jsonVolumeInfoObject.optString("title");
@@ -173,10 +175,9 @@ public class QueryUtils {
                 String imageUrl = imageLinksJsonObject.optString("smallThumbnail");
 
                 String previewUrl = jsonVolumeInfoObject.optString("previewLink");
-                JSONArray jsonArrayOfAuthors = jsonVolumeInfoObject.getJSONArray("authors");
+                JSONArray jsonArrayOfAuthors = jsonVolumeInfoObject.optJSONArray("authors");
 
-
-                for (int j = 0; j < jsonArrayOfAuthors.length(); j++) {
+                for (int j = 0; j < 1; j++) {
                     String author = jsonArrayOfAuthors.optString(j);
 
                     books.add(new Book(title, author, imageUrl, previewUrl));
